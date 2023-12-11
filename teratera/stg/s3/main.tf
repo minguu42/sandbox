@@ -6,6 +6,12 @@ terraform {
       version = "~> 5.0"
     }
   }
+  backend "s3" {
+    bucket  = "teratera-stg-tfstate"
+    key     = "stg/s3/terraform.tfstate"
+    region  = "ap-northeast-1"
+    encrypt = true
+  }
 }
 
 provider "aws" {
