@@ -20,16 +20,17 @@ resource "aws_s3_bucket" "tfstate" {
   }
 }
 
-# ステートファイルの完全な履歴が見れるように、バージョニングを有効化する
-resource "aws_s3_bucket_versioning" "enabled" {
-  bucket = aws_s3_bucket.tfstate.id
-  versioning_configuration {
-    status = "Enabled"
-  }
+# 明示的にバケットに対する全パブリックアクセスをブロックする
+resource "aws_s3_bucket_public_access_block" "tfstate_block" {
+  bucket                  = aws_s3_bucket.tfstate.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 # デフォルトでサーバサイド暗号化を有効化する
-resource "aws_s3_bucket_server_side_encryption_configuration" "default" {
+resource "aws_s3_bucket_server_side_encryption_configuration" "tfstate_default" {
   bucket = aws_s3_bucket.tfstate.id
   rule {
     apply_server_side_encryption_by_default {
@@ -38,11 +39,10 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "default" {
   }
 }
 
-# 明示的にバケットに対する全パブリックアクセスをブロックする
-resource "aws_s3_bucket_public_access_block" "public_access" {
-  bucket                  = aws_s3_bucket.tfstate.id
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+# ステートファイルの完全な履歴が見れるように、バージョニングを有効化する
+resource "aws_s3_bucket_versioning" "tfstate_enabled" {
+  bucket = aws_s3_bucket.tfstate.id
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
