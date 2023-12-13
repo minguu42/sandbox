@@ -16,6 +16,14 @@ terraform {
 
 provider "aws" {
   region = "ap-northeast-1"
+  default_tags {
+    tags = {
+      Product   = "teratera"
+      Env       = "stg"
+      Owner     = "minguu42"
+      ManagedBy = "terraform"
+    }
+  }
 }
 
 resource "aws_vpc" "main" {
@@ -28,7 +36,7 @@ resource "aws_vpc" "main" {
 
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
-  tags = {
+  tags   = {
     Name = "teratera-stg"
   }
 }
