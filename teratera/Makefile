@@ -1,12 +1,6 @@
 .DEFAULT_GOAL := help
 .PHONY: setup gen build run fmt lint help
 
-# testターゲットを実行する前に.envファイルから環境変数を読み込む
-export
-ifeq ($(MAKECMDGOALS), test)
-	include $(PWD)/.env
-endif
-
 setup: ## 開発に必要なツールをインストールする
 	brew install sqldef/sqldef/mysqldef
 	go install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
