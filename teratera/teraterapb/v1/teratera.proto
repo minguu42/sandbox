@@ -2,21 +2,14 @@ syntax = "proto3";
 
 package teraterapb.v1;
 
-option go_package = "github.com/minguu42/sandbox/teratera/teraterapb/v1;teraterapb";
+option go_package = "github.com/minguu42/sandbox/teratera/gen/teraterapb/v1;teraterapb";
 
 service TerateraService {
   rpc CheckHealth(CheckHealthRequest) returns (CheckHealthResponse);
-  rpc Greet(GreetRequest) returns (GreetResponse);
 }
 
 message CheckHealthRequest {}
 
 message CheckHealthResponse {
   string revision = 1;
-}
-
-message GreetRequest {}
-
-message GreetResponse {
-  string message = 1;
 }
