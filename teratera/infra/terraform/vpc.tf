@@ -133,8 +133,6 @@ resource "aws_vpc_security_group_ingress_rule" "alb_ingress" {
 
 resource "aws_vpc_security_group_egress_rule" "alb_egress" {
   security_group_id = aws_security_group.alb.id
-  from_port         = 0
-  to_port           = 0
   ip_protocol       = "-1"
   cidr_ipv4         = "0.0.0.0/0"
 }
@@ -154,8 +152,6 @@ resource "aws_vpc_security_group_ingress_rule" "rds_ingress" {
 
 resource "aws_vpc_security_group_egress_rule" "rds_egress" {
   security_group_id = aws_security_group.rds.id
-  from_port         = 0
-  to_port           = 0
   ip_protocol       = "-1"
   cidr_ipv4         = "0.0.0.0/0"
 }
