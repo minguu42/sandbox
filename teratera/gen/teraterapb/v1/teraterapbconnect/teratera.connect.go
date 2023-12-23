@@ -19,7 +19,7 @@ import (
 // generated with a version of connect newer than the one compiled into your binary. You can fix the
 // problem by either regenerating this code with an older version of connect or updating the connect
 // version compiled into your binary.
-const _ = connect.IsAtLeastVersion0_1_0
+const _ = connect.IsAtLeastVersion1_7_0
 
 const (
 	// TerateraServiceName is the fully-qualified name of the TerateraService service.
@@ -57,7 +57,8 @@ func NewTerateraServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 		checkHealth: connect.NewClient[v1.CheckHealthRequest, v1.CheckHealthResponse](
 			httpClient,
 			baseURL+TerateraServiceCheckHealthProcedure,
-			opts...,
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
+			connect.WithClientOptions(opts...),
 		),
 	}
 }
@@ -86,7 +87,8 @@ func NewTerateraServiceHandler(svc TerateraServiceHandler, opts ...connect.Handl
 	terateraServiceCheckHealthHandler := connect.NewUnaryHandler(
 		TerateraServiceCheckHealthProcedure,
 		svc.CheckHealth,
-		opts...,
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
+		connect.WithHandlerOptions(opts...),
 	)
 	return "/teraterapb.v1.TerateraService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {

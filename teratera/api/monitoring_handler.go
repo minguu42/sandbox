@@ -9,7 +9,7 @@ import (
 	"github.com/minguu42/sandbox/teratera/gen/teraterapb/v1"
 )
 
-func (h handler) CheckHealth(context.Context, *connect.Request[teraterapb.CheckHealthRequest]) (*connect.Response[teraterapb.CheckHealthResponse], error) {
+func (h handler) CheckHealth(_ context.Context, _ *connect.Request[teraterapb.CheckHealthRequest]) (*connect.Response[teraterapb.CheckHealthResponse], error) {
 	revision := "xxxxxxx"
 	if info, ok := debug.ReadBuildInfo(); ok {
 		if i := slices.IndexFunc(info.Settings, func(s debug.BuildSetting) bool {

@@ -5,7 +5,9 @@ package teraterapb.v1;
 option go_package = "github.com/minguu42/sandbox/teratera/gen/teraterapb/v1;teraterapb";
 
 service TerateraService {
-  rpc CheckHealth(CheckHealthRequest) returns (CheckHealthResponse);
+  rpc CheckHealth(CheckHealthRequest) returns (CheckHealthResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
 }
 
 message CheckHealthRequest {}
