@@ -25,7 +25,7 @@ variable "env" {
   type = string
   validation {
     condition     = contains(["prod", "stg"], var.env)
-    error_message = "Must be either \"prod\" or \"stg\""
+    error_message = "Only the following environment is allowed: prod | stg"
   }
 }
 
