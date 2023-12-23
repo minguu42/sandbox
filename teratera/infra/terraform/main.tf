@@ -30,5 +30,6 @@ variable "env" {
 }
 
 locals {
-  product = "teratera"
+  product      = "teratera"
+  isProduction = var.env == "prod"
 }

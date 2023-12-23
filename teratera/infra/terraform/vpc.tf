@@ -50,6 +50,14 @@ resource "aws_subnet" "private_c" {
 #  }
 #}
 
+resource "aws_eip" "nat_c" {
+  count  = local.isProduction ? 1 : 0
+  domain = "vpc"
+  tags   = {
+    Name = "${local.product}-${var.env}-nat-c"
+  }
+}
+
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
   tags   = {
@@ -66,6 +74,16 @@ resource "aws_internet_gateway" "main" {
 #  }
 #  depends_on = [aws_internet_gateway.main]
 #}
+
+resource "aws_nat_gateway" "c" {
+  count         = local.isProduction ? 1 : 0
+  allocation_id = aws_eip.nat_c[0].id
+  subnet_id     = aws_subnet.public_c.id
+  tags          = {
+    Name = "${local.product}-${var.env}-c"
+  }
+  depends_on = [aws_internet_gateway.main]
+}
 
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
@@ -93,7 +111,7 @@ resource "aws_route_table_association" "public_c" {
 }
 
 # TODO: コメントアウトする
-#resource "aws_route_table" "private" {
+#resource "aws_route_table" "private_a" {
 #  vpc_id = aws_vpc.main.id
 #  route {
 #    cidr_block = "10.0.0.0/16"
@@ -104,18 +122,34 @@ resource "aws_route_table_association" "public_c" {
 #    nat_gateway_id = aws_nat_gateway.a.id
 #  }
 #  tags = {
-#    Name = "${local.product}-${var.env}-private"
+#    Name = "${local.product}-${var.env}-private-a"
 #  }
 #}
 #
 #resource "aws_route_table_association" "private_a" {
 #  subnet_id      = aws_subnet.private_a.id
-#  route_table_id = aws_route_table.private.id
+#  route_table_id = aws_route_table.private_a.id
+#}
+#
+#resource "aws_route_table" "private_c" {
+#  count = local.isProduction ? 1 : 0
+#  vpc_id = aws_vpc.main.id
+#  route {
+#    cidr_block = "10.0.0.0/16"
+#    gateway_id = "local"
+#  }
+#  route {
+#    cidr_block     = "0.0.0.0/0"
+#    nat_gateway_id = aws_nat_gateway.c.id
+#  }
+#  tags = {
+#    Name = "${local.product}-${var.env}-private-c"
+#  }
 #}
 #
 #resource "aws_route_table_association" "private_c" {
 #  subnet_id      = aws_subnet.private_a.id
-#  route_table_id = aws_route_table.private.id
+#  route_table_id = local.isProduction ? aws_route_table.private_c[0].id : aws_route_table.private_a.id
 #}
 
 resource "aws_security_group" "alb" {
