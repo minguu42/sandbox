@@ -12,3 +12,10 @@ resource "aws_s3_bucket_versioning" "tfstate" {
     status = "Enabled"
   }
 }
+
+resource "aws_s3_bucket" "lb_api_logs" {
+  bucket = "${local.product}-${var.env}-lb-api-logs"
+  lifecycle {
+    prevent_destroy = true
+  }
+}

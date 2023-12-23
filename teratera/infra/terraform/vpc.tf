@@ -152,21 +152,21 @@ resource "aws_route_table_association" "public_c" {
 #  route_table_id = local.isProduction ? aws_route_table.private_c[0].id : aws_route_table.private_a.id
 #}
 
-resource "aws_security_group" "alb" {
-  name   = "${local.product}-${var.env}-alb"
+resource "aws_security_group" "lb_api" {
+  name   = "${local.product}-${var.env}-lb-api"
   vpc_id = aws_vpc.main.id
 }
 
-resource "aws_vpc_security_group_ingress_rule" "alb_ingress" {
-  security_group_id = aws_security_group.alb.id
+resource "aws_vpc_security_group_ingress_rule" "lb_api_ingress" {
+  security_group_id = aws_security_group.lb_api.id
   from_port         = 80
   to_port           = 80
   ip_protocol       = "tcp"
   cidr_ipv4         = "0.0.0.0/0"
 }
 
-resource "aws_vpc_security_group_egress_rule" "alb_egress" {
-  security_group_id = aws_security_group.alb.id
+resource "aws_vpc_security_group_egress_rule" "lb_api_egress" {
+  security_group_id = aws_security_group.lb_api.id
   ip_protocol       = "-1"
   cidr_ipv4         = "0.0.0.0/0"
 }
