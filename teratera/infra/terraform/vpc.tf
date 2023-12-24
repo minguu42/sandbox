@@ -42,13 +42,12 @@ resource "aws_subnet" "private_c" {
   }
 }
 
-# TODO: コメントアウトする
-#resource "aws_eip" "nat_a" {
-#  domain = "vpc"
-#  tags   = {
-#    Name = "${local.product}-${var.env}-nat-a"
-#  }
-#}
+resource "aws_eip" "nat_a" {
+  domain = "vpc"
+  tags   = {
+    Name = "${local.product}-${var.env}-nat-a"
+  }
+}
 
 resource "aws_eip" "nat_c" {
   count  = local.isProduction ? 1 : 0
@@ -65,15 +64,14 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-# TODO: コメントアウトする
-#resource "aws_nat_gateway" "a" {
-#  allocation_id = aws_eip.nat_a.id
-#  subnet_id     = aws_subnet.public_a.id
-#  tags          = {
-#    Name = "${local.product}-${var.env}-a"
-#  }
-#  depends_on = [aws_internet_gateway.main]
-#}
+resource "aws_nat_gateway" "a" {
+  allocation_id = aws_eip.nat_a.id
+  subnet_id     = aws_subnet.public_a.id
+  tags          = {
+    Name = "${local.product}-${var.env}-a"
+  }
+  depends_on = [aws_internet_gateway.main]
+}
 
 resource "aws_nat_gateway" "c" {
   count         = local.isProduction ? 1 : 0
@@ -110,47 +108,46 @@ resource "aws_route_table_association" "public_c" {
   route_table_id = aws_route_table.public.id
 }
 
-# TODO: コメントアウトする
-#resource "aws_route_table" "private_a" {
-#  vpc_id = aws_vpc.main.id
-#  route {
-#    cidr_block = "10.0.0.0/16"
-#    gateway_id = "local"
-#  }
-#  route {
-#    cidr_block     = "0.0.0.0/0"
-#    nat_gateway_id = aws_nat_gateway.a.id
-#  }
-#  tags = {
-#    Name = "${local.product}-${var.env}-private-a"
-#  }
-#}
-#
-#resource "aws_route_table_association" "private_a" {
-#  subnet_id      = aws_subnet.private_a.id
-#  route_table_id = aws_route_table.private_a.id
-#}
-#
-#resource "aws_route_table" "private_c" {
-#  count = local.isProduction ? 1 : 0
-#  vpc_id = aws_vpc.main.id
-#  route {
-#    cidr_block = "10.0.0.0/16"
-#    gateway_id = "local"
-#  }
-#  route {
-#    cidr_block     = "0.0.0.0/0"
-#    nat_gateway_id = aws_nat_gateway.c.id
-#  }
-#  tags = {
-#    Name = "${local.product}-${var.env}-private-c"
-#  }
-#}
-#
-#resource "aws_route_table_association" "private_c" {
-#  subnet_id      = aws_subnet.private_a.id
-#  route_table_id = local.isProduction ? aws_route_table.private_c[0].id : aws_route_table.private_a.id
-#}
+resource "aws_route_table" "private_a" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "10.0.0.0/16"
+    gateway_id = "local"
+  }
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.a.id
+  }
+  tags = {
+    Name = "${local.product}-${var.env}-private-a"
+  }
+}
+
+resource "aws_route_table_association" "private_a" {
+  subnet_id      = aws_subnet.private_a.id
+  route_table_id = aws_route_table.private_a.id
+}
+
+resource "aws_route_table" "private_c" {
+  count = local.isProduction ? 1 : 0
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "10.0.0.0/16"
+    gateway_id = "local"
+  }
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.c[0].id
+  }
+  tags = {
+    Name = "${local.product}-${var.env}-private-c"
+  }
+}
+
+resource "aws_route_table_association" "private_c" {
+  subnet_id      = aws_subnet.private_c.id
+  route_table_id = local.isProduction ? aws_route_table.private_c[0].id : aws_route_table.private_a.id
+}
 
 resource "aws_security_group" "lb_api" {
   name   = "${local.product}-${var.env}-lb-api"
@@ -200,7 +197,7 @@ resource "aws_vpc_security_group_ingress_rule" "rds_ingress" {
   from_port         = 3306
   to_port           = 3306
   ip_protocol       = "tcp"
-  cidr_ipv4         = "0.0.0.0/0"
+  cidr_ipv4         = "10.0.0.0/16"
 }
 
 resource "aws_vpc_security_group_egress_rule" "rds_egress" {
