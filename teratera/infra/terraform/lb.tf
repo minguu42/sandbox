@@ -42,8 +42,9 @@ resource "aws_lb_target_group" "api" {
   name        = "${local.product}-${var.env}-api-public"
   port        = 8080
   protocol    = "HTTP"
+  target_type = "ip"
   vpc_id      = aws_vpc.main.id
   health_check {
-    path                = "/teraterapb.v1.TerateraService/CheckHealth?encoding=json&message=%7b%7d"
+    path = "/teraterapb.v1.TerateraService/CheckHealth?encoding=json&message=%7b%7d"
   }
 }
