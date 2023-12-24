@@ -13,21 +13,6 @@ gen: ## コードを生成する
 	@buf generate
 	@$(MAKE) fmt
 
-build: ## 本番用APIサーバのコンテナイメージをビルドする
-	@docker build \
-            --tag=teratera-api:latest \
-            --target=prod .
-
-run: ## 本番用APIサーバを実行する
-	@docker compose up -d db
-	@docker container run \
-            --env-file .env \
-            --name teratera-api \
-            --network=teratera_default \
-            -p 8080:8080 \
-            --rm \
-            teratera-api
-
 fmt: ## コードを整形する
 	@goimports -w .
 
