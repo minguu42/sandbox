@@ -1,0 +1,16 @@
+services:
+  db:
+    image: mysql:8.0.32
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+    container_name: teratera-db
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - ./infra/initdb.sh:/docker-entrypoint-initdb.d/
+      - ./infra/mysql/schema.sql:/schema.sql
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
