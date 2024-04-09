@@ -1,0 +1,44 @@
+CREATE TABLE users (
+    id         CHAR(26)     NOT NULL COMMENT 'ユーザID',
+    name       VARCHAR(15)  NOT NULL COMMENT 'ユーザ名',
+    email      VARCHAR(254) NOT NULL COMMENT 'メールアドレス',
+    password   CHAR(60)     NOT NULL COMMENT 'パスワード',
+    created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '作成日',
+    updated_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新日',
+    PRIMARY KEY (id),
+    UNIQUE INDEX (name),
+    UNIQUE INDEX (email)
+) ENGINE = InnoDB CHARSET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = 'ユーザ';
+
+CREATE TABLE tasks (
+    id           CHAR(26)            NOT NULL COMMENT 'タスクID',
+    user_id      CHAR(26)            NOT NULL COMMENT '所有するユーザのID',
+    name         VARCHAR(80)         NOT NULL COMMENT 'タスク名',
+    content      VARCHAR(300)        NOT NULL COMMENT 'メモ',
+    priority     TINYINT(2) UNSIGNED NOT NULL CHECK (priority BETWEEN 0 AND 3) COMMENT '優先度（0~3の数字で指定し、3が最も優先度が高い）',
+    due_on       DATE COMMENT '期日',
+    completed_at DATETIME COMMENT '完了日',
+    created_at   DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '作成日',
+    updated_at   DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新日',
+    PRIMARY KEY (id),
+    CONSTRAINT tasks_user_id_fk FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB CHARSET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = 'タスク';
+
+CREATE TABLE tags (
+    id         CHAR(26)    NOT NULL COMMENT 'タグID',
+    user_id    CHAR(26)    NOT NULL COMMENT '所有するユーザのID',
+    name       VARCHAR(20) NOT NULL COMMENT 'タグ名',
+    created_at DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '作成日',
+    updated_at DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新日',
+    PRIMARY KEY (id),
+    CONSTRAINT tags_user_id_fk FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB CHARSET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = 'タグ';
+
+CREATE TABLE tasks_tags (
+    task_id    CHAR(26) NOT NULL COMMENT '紐づくタスクID',
+    tag_id     CHAR(26) NOT NULL COMMENT '紐づくタグID',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '作成日',
+    PRIMARY KEY (task_id, tag_id),
+    CONSTRAINT tasks_tags_task_id_fk FOREIGN KEY (task_id) REFERENCES tasks (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT tasks_tags_tag_id_fk FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB CHARSET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = 'タスクとタグの紐づき';

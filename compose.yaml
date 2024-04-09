@@ -3,12 +3,12 @@ services:
     image: mysql:8.0.32
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
-    container_name: teratera-db
+    container_name: sandbox-db
     restart: always
     ports:
       - 3306:3306
     volumes:
-      - ./infra/initdb.sh:/docker-entrypoint-initdb.d/
+      - ./infra/mysql/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
       - ./infra/mysql/schema.sql:/schema.sql
       - db_data:/var/lib/mysql
 
