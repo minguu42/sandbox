@@ -12,14 +12,16 @@ import (
 func main() {
 	var b bytes.Buffer
 	w := multipart.NewWriter(&b)
-	w.WriteField("name", "John Smith") // ファイル以外のフォームフィールドの値はWriteFieldメソッドを使って登録する
-	fileWriter, err := w.CreateFormFile("thumbnail", ".gitignore")
+	// ファイル以外のフォームフィールドの値はWriteFieldメソッドを使って登録する
+	w.WriteField("name", "John Smith")
+
+	fileWriter, err := w.CreateFormFile("thumbnail", "example.txt")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	readFile, err := os.Open(".gitignore")
+	readFile, err := os.Open("example.txt")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	defer readFile.Close()
 	io.Copy(fileWriter, readFile)
@@ -27,7 +29,7 @@ func main() {
 
 	resp, err := http.Post("http://localhost:18888", w.FormDataContentType(), &b)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	defer resp.Body.Close()
 	log.Println(resp.Status)
