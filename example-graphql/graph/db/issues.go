@@ -28,6 +28,7 @@ type Issue struct {
 	Title      string `boil:"title" json:"title" toml:"title" yaml:"title"`
 	Closed     int8   `boil:"closed" json:"closed" toml:"closed" yaml:"closed"`
 	Number     int    `boil:"number" json:"number" toml:"number" yaml:"number"`
+	Author     string `boil:"author" json:"author" toml:"author" yaml:"author"`
 	Repository string `boil:"repository" json:"repository" toml:"repository" yaml:"repository"`
 
 	R *issueR `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -40,6 +41,7 @@ var IssueColumns = struct {
 	Title      string
 	Closed     string
 	Number     string
+	Author     string
 	Repository string
 }{
 	ID:         "id",
@@ -47,6 +49,7 @@ var IssueColumns = struct {
 	Title:      "title",
 	Closed:     "closed",
 	Number:     "number",
+	Author:     "author",
 	Repository: "repository",
 }
 
@@ -56,6 +59,7 @@ var IssueTableColumns = struct {
 	Title      string
 	Closed     string
 	Number     string
+	Author     string
 	Repository string
 }{
 	ID:         "issues.id",
@@ -63,6 +67,7 @@ var IssueTableColumns = struct {
 	Title:      "issues.title",
 	Closed:     "issues.closed",
 	Number:     "issues.number",
+	Author:     "issues.author",
 	Repository: "issues.repository",
 }
 
@@ -143,6 +148,7 @@ var IssueWhere = struct {
 	Title      whereHelperstring
 	Closed     whereHelperint8
 	Number     whereHelperint
+	Author     whereHelperstring
 	Repository whereHelperstring
 }{
 	ID:         whereHelperstring{field: "`issues`.`id`"},
@@ -150,6 +156,7 @@ var IssueWhere = struct {
 	Title:      whereHelperstring{field: "`issues`.`title`"},
 	Closed:     whereHelperint8{field: "`issues`.`closed`"},
 	Number:     whereHelperint{field: "`issues`.`number`"},
+	Author:     whereHelperstring{field: "`issues`.`author`"},
 	Repository: whereHelperstring{field: "`issues`.`repository`"},
 }
 
@@ -181,8 +188,8 @@ func (r *issueR) GetIssueRepository() *Repository {
 type issueL struct{}
 
 var (
-	issueAllColumns            = []string{"id", "url", "title", "closed", "number", "repository"}
-	issueColumnsWithoutDefault = []string{"id", "url", "title", "number", "repository"}
+	issueAllColumns            = []string{"id", "url", "title", "closed", "number", "author", "repository"}
+	issueColumnsWithoutDefault = []string{"id", "url", "title", "number", "author", "repository"}
 	issueColumnsWithDefault    = []string{"closed"}
 	issuePrimaryKeyColumns     = []string{"id"}
 	issueGeneratedColumns      = []string{}
