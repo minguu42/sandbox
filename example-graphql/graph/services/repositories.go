@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"time"
 
 	"github.com/minguu42/sandbox/example-graphql/graph/db"
 	"github.com/minguu42/sandbox/example-graphql/graph/model"
@@ -17,7 +16,7 @@ func convertRepository(r *db.Repository) *model.Repository {
 			ID: r.Owner,
 		},
 		Name:      r.Name,
-		CreatedAt: r.CreatedAt.Format(time.RFC3339),
+		CreatedAt: r.CreatedAt,
 	}
 }
 
