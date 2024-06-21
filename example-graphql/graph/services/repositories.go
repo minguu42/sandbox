@@ -21,21 +21,26 @@ func convertRepository(r *db.Repository) *model.Repository {
 }
 
 type RepositoryService interface {
-	GetRepositoryByNameAndOwner(ctx context.Context, name string, owner string) (*model.Repository, error)
+	GetRepoByFullName(ctx context.Context, owner, name string) (*model.Repository, error)
 }
 
-type repositoryService struct {
+type repoService struct {
 	exec boil.ContextExecutor
 }
 
-func (s repositoryService) GetRepositoryByNameAndOwner(ctx context.Context, name string, owner string) (*model.Repository, error) {
-	r, err := db.Repositories(
-		qm.Select(db.RepositoryTableColumns.ID, db.RepositoryColumns.Name, db.RepositoryColumns.Owner, db.RepositoryColumns.CreatedAt),
-		db.RepositoryWhere.Name.EQ(name),
+func (s *repoService) GetRepoByFullName(ctx context.Context, owner, name string) (*model.Repository, error) {
+	repo, err := db.Repositories(
+		qm.Select(
+			db.RepositoryColumns.ID,        // レポジトリID
+			db.RepositoryColumns.Name,      // レポジトリ名
+			db.RepositoryColumns.Owner,     // レポジトリを所有しているユーザーのID
+			db.RepositoryColumns.CreatedAt, // 作成日時
+		),
 		db.RepositoryWhere.Owner.EQ(owner),
+		db.RepositoryWhere.Name.EQ(name),
 	).One(ctx, s.exec)
 	if err != nil {
 		return nil, err
 	}
-	return convertRepository(r), nil
+	return convertRepository(repo), nil
 }
