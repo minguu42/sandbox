@@ -1,0 +1,17 @@
+services:
+  db:
+    image: mysql:8.0.37
+    environment:
+      MYSQL_DATABASE: maindb
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+    container_name: example-graphql-db
+    restart: always
+    ports:
+      - 13306:3306
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/0_schema.sql
+      - ./insert.sql:/docker-entrypoint-initdb.d/1_insert.sql
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

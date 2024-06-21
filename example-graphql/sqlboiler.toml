@@ -1,0 +1,14 @@
+pkgname="db"
+output="graph/db"
+wipe=true
+add-global-variants=false
+no-tests=true
+
+[mysql]
+dbname  = "maindb"
+host    = "localhost"
+port    = 13306
+user    = "root"
+pass    = ""
+sslmode = "false"
+tinyint_as_int = true
