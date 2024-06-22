@@ -8,4 +8,5 @@ import "github.com/minguu42/sandbox/example-graphql/graph/services"
 
 type Resolver struct {
 	Srv services.Services
+	*Loaders
 }

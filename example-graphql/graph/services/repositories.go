@@ -21,11 +21,22 @@ func convertRepository(r *db.Repository) *model.Repository {
 }
 
 type RepositoryService interface {
+	GetRepoByID(ctx context.Context, id string) (*model.Repository, error)
 	GetRepoByFullName(ctx context.Context, owner, name string) (*model.Repository, error)
 }
 
 type repoService struct {
 	exec boil.ContextExecutor
+}
+
+func (r *repoService) GetRepoByID(ctx context.Context, id string) (*model.Repository, error) {
+	repo, err := db.FindRepository(ctx, r.exec, id,
+		db.RepositoryColumns.ID, db.RepositoryColumns.Name, db.RepositoryColumns.Owner, db.RepositoryColumns.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return convertRepository(repo), nil
 }
 
 func (s *repoService) GetRepoByFullName(ctx context.Context, owner, name string) (*model.Repository, error) {

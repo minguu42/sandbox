@@ -16,9 +16,18 @@ func convertUser(user *db.User) *model.User {
 	}
 }
 
+func convertUserSlice(users db.UserSlice) []*model.User {
+	result := make([]*model.User, 0, len(users))
+	for _, user := range users {
+		result = append(result, convertUser(user))
+	}
+	return result
+}
+
 type UserService interface {
 	GetUserByID(ctx context.Context, id string) (*model.User, error)
 	GetUserByName(ctx context.Context, name string) (*model.User, error)
+	ListUsersByID(ctx context.Context, ids []string) ([]*model.User, error)
 }
 
 type userService struct {
@@ -45,4 +54,15 @@ func (s *userService) GetUserByName(ctx context.Context, name string) (*model.Us
 		return nil, err
 	}
 	return convertUser(user), nil
+}
+
+func (s *userService) ListUsersByID(ctx context.Context, ids []string) ([]*model.User, error) {
+	users, err := db.Users(
+		qm.Select(db.UserTableColumns.ID, db.UserTableColumns.Name),
+		db.UserWhere.ID.IN(ids),
+	).All(ctx, s.exec)
+	if err != nil {
+		return nil, err
+	}
+	return convertUserSlice(users), nil
 }

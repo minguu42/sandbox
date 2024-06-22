@@ -12,6 +12,7 @@ import (
 	"github.com/minguu42/sandbox/example-graphql/graph"
 	"github.com/minguu42/sandbox/example-graphql/graph/services"
 	"github.com/minguu42/sandbox/example-graphql/internal"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 const defaultPort = "8080"
@@ -27,12 +28,14 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.Close()
+	boil.DebugMode = true
 
 	service := services.New(db)
 
-	srv := handler.NewDefaultServer(internal.NewExecutableSchema(internal.Config{
-		Resolvers: &graph.Resolver{Srv: service}},
-	))
+	srv := handler.NewDefaultServer(internal.NewExecutableSchema(internal.Config{Resolvers: &graph.Resolver{
+		Srv:     service,
+		Loaders: graph.NewLoaders(service),
+	}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
