@@ -12,7 +12,6 @@ import (
 
 type JSONIndentHandler struct {
 	w       io.Writer
-	opts    *slog.HandlerOptions
 	handler slog.Handler
 	buf     *bytes.Buffer
 }
@@ -21,7 +20,6 @@ func NewJSONIndentHandler(w io.Writer, opts *slog.HandlerOptions) *JSONIndentHan
 	buf := &bytes.Buffer{}
 	return &JSONIndentHandler{
 		w:       w,
-		opts:    opts,
 		handler: slog.NewJSONHandler(buf, opts),
 		buf:     buf,
 	}
@@ -47,21 +45,17 @@ func (h *JSONIndentHandler) Handle(ctx context.Context, record slog.Record) erro
 }
 
 func (h *JSONIndentHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
-	buf := &bytes.Buffer{}
 	return &JSONIndentHandler{
 		w:       h.w,
-		opts:    h.opts,
-		handler: slog.NewJSONHandler(buf, h.opts).WithAttrs(attrs),
-		buf:     buf,
+		handler: h.handler.WithAttrs(attrs),
+		buf:     h.buf,
 	}
 }
 
 func (h *JSONIndentHandler) WithGroup(name string) slog.Handler {
-	buf := &bytes.Buffer{}
 	return &JSONIndentHandler{
 		w:       h.w,
-		opts:    h.opts,
-		handler: slog.NewJSONHandler(buf, h.opts).WithGroup(name),
-		buf:     buf,
+		handler: h.handler.WithGroup(name),
+		buf:     h.buf,
 	}
 }
