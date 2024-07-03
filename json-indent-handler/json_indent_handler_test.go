@@ -1,4 +1,4 @@
-package logging_test
+package main
 
 import (
 	"bytes"
@@ -6,8 +6,6 @@ import (
 	"log/slog"
 	"testing"
 	"testing/slogtest"
-
-	"github.com/minguu42/sandbox/logging"
 )
 
 func TestJSONIndentHandler(t *testing.T) {
@@ -15,7 +13,7 @@ func TestJSONIndentHandler(t *testing.T) {
 
 	newHandler := func(t *testing.T) slog.Handler {
 		buf.Reset()
-		return logging.NewJSONIndentHandler(&buf, nil)
+		return NewJSONIndentHandler(&buf, nil)
 	}
 	result := func(t *testing.T) map[string]any {
 		line := buf.Bytes()
